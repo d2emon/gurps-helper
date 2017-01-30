@@ -1,7 +1,34 @@
+import environment
+
+
+class HT:
+    def __init__(self, val):
+        self.value = val
+
+    def current(self, val):
+        if val > 3:
+            print(val)
+            return val
+        if val > 0:
+            print("1/2 Move/Dodge")
+            return val
+        if val > -self.value:
+            print("Each turn roll vs. HT +/- Strong/Weak Will.")
+            print("Success: act normally")
+            print("Failure: unconscious")
+            return val
+        if val > -5 * self.value:
+            print("Roll vs. HT (no Strong/Weak Will), first at –HT then at every further –5 thereafter.")
+            print("Success: act normally")
+            print("Failure: death")
+            return val
+        print("Automatic Death")
+        return 0
+
+
 class Attack:
     skill = 10
 
-    environmental = 1
     personal = 1
     target = 1
     rangedMod = 1
@@ -21,10 +48,13 @@ class Attack:
     dmgEffects = True
     hp = 1
 
+    def __init__(self):
+        self.environment = environment.Environment()
+
     def p1(self):
         print("1. Start with unmodified weapon skill({}) and go to [2]".format(self.skill))
 
-        self.skill += self.environmental
+        self.skill += self.environment.getCombatModifier()
         print("2. Apply all environmental modifiers - for bad footing (B107), darkness (B92), etc ({}) - and go to [3]".format(self.skill))
 
         self.skill += self.personal
@@ -356,8 +386,29 @@ class Attack:
 
 
 def main():
+    import random
+
+    e = environment.Environment()
+    e.footing = random.randint(0, 100) > 50
+    e.darkness = random.randint(-10, 10)
+    e.report()
+    exit(0)
+
     a = Attack()
+    a.environment = e
     a.run()
+
+    ht = HT(10)
+    print("-"*80)
+    ht.current(10)
+    print("-"*80)
+    ht.current(2)
+    print("-"*80)
+    ht.current(0)
+    print("-"*80)
+    ht.current(-12)
+    print("-"*80)
+    ht.current(-50)
 
 
 if __name__ == "__main__":
