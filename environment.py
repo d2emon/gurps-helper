@@ -24,3 +24,4 @@ class Environment:
             print("Darkness({})".format(self.darkness))
         if not self.footing:
             print("Bad Footing")
+        print("Modifier: {}".format(self.getCombatModifier()))
