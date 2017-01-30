@@ -386,10 +386,11 @@ class Attack:
 
 
 def main():
+    import dice
     import random
 
     e = environment.Environment()
-    e.footing = random.randint(0, 100) > 50
+    e.footing = dice.byPercent({50: True, 100: False})
     e.darkness = random.randint(-10, 10)
     e.report()
     exit(0)
