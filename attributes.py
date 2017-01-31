@@ -8,6 +8,9 @@ class Attribute:
         else:
             self.value = self.defValue
 
+    def getValue(self):
+        return self.value
+
     def valueDesc(self):
         if self.value <= 6:
             return "Cripping"
@@ -26,6 +29,16 @@ class Attribute:
     def countCost(self):
         delta = self.value - self.defValue
         return delta * self.cost
+
+    def successRoll(self, modifier=0):
+        modified = self.value + modifier
+
+        import dice
+        roll = dice.d(3)
+
+        import logging
+        logging.debug("%d vs. %d [%d(%d)]", roll, modified, self.value, modifier)
+        return roll <= modified
 
 
 class ST(Attribute):
@@ -91,6 +104,21 @@ class ST(Attribute):
             return int(BL)
         return BL
 
+    def pickUp(self):
+        return self.BL() * 2
+
+    def liftHead(self):
+        return self.BL() * 8
+
+    def maxWeight(self, loadClass):
+        return self.BL() * (1 + loadClass * loadClass)
+
+    def moveMdf(self, loadClass):
+        return 1 - loadClass * 0.2
+
+    def dodgeMdf(self, loadClass):
+        return -loadClass
+
 
 class DX(Attribute):
     cost = 20
@@ -106,15 +134,15 @@ class HT(Attribute):
 
 class Secondary(Attribute):
     def __init__(self, Primary, modifier=0):
-        Attribute.__init__(self, value=Primary.value + modifier)
+        Attribute.__init__(self, value=Primary.getValue() + modifier)
 
         self.Primary = Primary
         self.modifier = modifier
 
     def getValue(self):
-        return self.Primary.value + self.modifier
+        return self.Primary.getValue() + self.modifier
 
-    def getCost(self):
+    def countCost(self):
         return self.modifier * self.cost
 
 
@@ -128,3 +156,36 @@ class Will(Secondary):
 
 class Perc(Secondary):
     cost = 5
+
+
+class FP(Secondary):
+    cost = 3
+
+
+class BS(Attribute):
+    cost = 20
+
+    def __init__(self, DX=None, HT=None, modifier=0):
+        Attribute.__init__(self, value=(DX.value + HT.value) / 4 + modifier)
+
+        self.Primaries = [DX, HT]
+        self.modifier = modifier
+
+    def getValue(self):
+        s = 0
+        for i in self.Primaries:
+            s += i.value
+        return s / 4 + self.modifier
+
+    def countCost(self):
+        return self.modifier * self.cost
+
+    def dodge(self):
+        return int(self.getValue()) + 3
+
+
+class Move(Secondary):
+    cost = 5
+
+    def getValue(self):
+        return int(self.Primary.getValue()) + self.modifier
