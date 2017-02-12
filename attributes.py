@@ -21,7 +21,7 @@ class BasicDamage(Base):
         self.swing_dice, self.swing_mod = swing
 
     def __repr__(self):
-        return "<ST('{}')\tthrust {}d+{}\tswing {}d+{}>".format(self.value,
+        return "<ST({})\tthrust {}d+{}\tswing {}d+{}>".format(self.value,
                                                                 self.thrust_dice, self.thrust_mod,
                                                                 self.swing_dice, self.swing_mod)
 

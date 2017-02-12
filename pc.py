@@ -70,4 +70,15 @@ class PlayerCharacter:
         session.commit()
 
     def load(self, session, id):
-        self.record = session.query(Character).filter_by(id=id).first()
+        record = session.query(Character).filter_by(id=id).one()
+
+        self.record = record
+        print(self.record)
+
+    def fill(self, session, id):
+        self.load(session, id)
+
+        self.setST(self.record.st)
+        self.attributes["DX"].value = self.record.dx
+        self.attributes["IQ"].value = self.record.iq
+        self.attributes["HT"].value = self.record.ht
