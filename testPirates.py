@@ -1,3 +1,11 @@
+def showChar(character):
+    print(character)
+    print("ST\t{}".format(character.ST))
+    print("DX\t{}".format(character.DX))
+    print("IQ\t{}".format(character.IQ))
+    print("HT\t{}".format(character.HT))
+
+
 def savePC(session):
     import pc
     from pirates.pc import Default, Monk
@@ -8,11 +16,7 @@ def savePC(session):
     ]
 
     for c in rooster:
-        print(c)
-        print("ST\t{}".format(c.attributes["ST"]))
-        print("DX\t{}".format(c.attributes["DX"]))
-        print("IQ\t{}".format(c.attributes["IQ"]))
-        print("HT\t{}".format(c.attributes["HT"]))
+        showChar(c)
         pc.save(c, session)
     return rooster
 
@@ -23,7 +27,7 @@ def main():
     print("="*80)
 
     import db
-    e, s = db.connect(True)
+    e, s = db.connect(False)
 
     import pc
     s.query(pc.PlayerCharacter).delete()
@@ -44,17 +48,12 @@ def main():
         print("="*80)
         c.afterLoad()
 
-        thrust = c.attributes["ST"].thrust()
-        swing = c.attributes["ST"].swing()
+        thrust = c.ST.thrust()
+        swing = c.ST.swing()
 
         print("-"*80)
         print("LOAD:")
-        print(c)
-
-        print("ST\t{}".format(c.attributes["ST"]))
-        print("DX\t{}".format(c.attributes["DX"]))
-        print("IQ\t{}".format(c.attributes["IQ"]))
-        print("HT\t{}".format(c.attributes["HT"]))
+        showChar(c)
 
         print("Thrust\t{}".format(thrust))
         print("Swing\t{}".format(swing))
@@ -65,11 +64,8 @@ def main():
 
         print("="*80)
 
-    print("ST\t{}".format(chars[0].attributes["ST"]))
-    print("DX\t{}".format(chars[0].attributes["DX"]))
-    print("IQ\t{}".format(chars[0].attributes["IQ"]))
-    print("HT\t{}".format(chars[0].attributes["HT"]))
-
+    showChar(chars[0])
+    
 
 if __name__ == "__main__":
     main()

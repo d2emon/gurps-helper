@@ -6,9 +6,9 @@ class Default(pc.PlayerCharacter):
         pc.PlayerCharacter.__init__(self, "Default")
 
         self.setST(10)
-        self.attributes["DX"].value = 10
-        self.attributes["IQ"].value = 10
-        self.attributes["HT"].value = 10
+        self.setDX(10)
+        self.setIQ(10)
+        self.setHT(10)
 
 
 class Monk(pc.PlayerCharacter):
@@ -16,6 +16,6 @@ class Monk(pc.PlayerCharacter):
         pc.PlayerCharacter.__init__(self, "Winnfred O'Poughann")
 
         self.setST(12)
-        self.attributes["DX"].value = 8
-        self.attributes["IQ"].value = 12
-        self.attributes["HT"].value = 10
+        self.setDX(8)
+        self.setIQ(12)
+        self.setHT(10)

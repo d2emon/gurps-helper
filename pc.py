@@ -16,39 +16,37 @@ class PlayerCharacter(Base):
     dx = Column(Integer, default=10)
     iq = Column(Integer, default=10)
     ht = Column(Integer, default=10)
-    attributes = {
-        "ST": attributes.HT(),
-        "DX": attributes.DX(),
-        "IQ": attributes.IQ(),
-        "HT": attributes.HT(),
-    }
 
     def __init__(self, name="UNNAMED"):
         self.name = name
-        self.attributes = {
-            "ST": attributes.ST(),
-            "DX": attributes.DX(),
-            "IQ": attributes.IQ(),
-            "HT": attributes.HT(),
-        }
+        self.addAttributes()
 
-        self.HP = attributes.HP(self.attributes["ST"])
-        self.Will = attributes.Will(self.attributes["IQ"])
-        self.Perc = attributes.Perc(self.attributes["IQ"])
-        self.FP = attributes.FP(self.attributes["HT"])
-        self.BS = attributes.BS(self.attributes["DX"], self.attributes["HT"])
+        self.HP = attributes.HP(self.ST)
+        self.Will = attributes.Will(self.IQ)
+        self.Perc = attributes.Perc(self.IQ)
+        self.FP = attributes.FP(self.HT)
+        self.BS = attributes.BS(self.DX, self.HT)
         self.Move = attributes.Move(self.BS)
 
-        self.st = self.attributes["ST"]
-        self.dx = self.attributes["DX"]
-        self.iq = self.attributes["IQ"]
-        self.ht = self.attributes["HT"]
+        # self.st = self.ST.value
+        # self.dx = self.DX.value
+        # self.iq = self.IQ.value
+        # self.ht = self.HT.value
 
     def __repr__(self):
         return "<User#{}\t'{}'>".format(self.id, self.name)
 
     def setST(self, value):
-        self.attributes["ST"].value = value
+        self.ST.value = value
+
+    def setDX(self, value):
+        self.DX.value = value
+
+    def setIQ(self, value):
+        self.IQ.value = value
+
+    def setHT(self, value):
+        self.HT.value = value
 
     def countCost(self):
         cost = 0
@@ -60,24 +58,25 @@ class PlayerCharacter(Base):
         cost += self.FP.countCost()
         return cost
 
+    def addAttributes(self):
+        self.ST = attributes.ST()
+        self.DX = attributes.DX()
+        self.IQ = attributes.IQ()
+        self.HT = attributes.HT()
+
     def beforeSave(self):
-        self.st = self.attributes.get("ST", 10).getValue()
-        self.dx = self.attributes.get("DX", 10).getValue()
-        self.iq = self.attributes.get("IQ", 10).getValue()
-        self.ht = self.attributes.get("HT", 10).getValue()
+        self.st = self.ST.getValue()
+        self.dx = self.DX.getValue()
+        self.iq = self.IQ.getValue()
+        self.ht = self.HT.getValue()
 
     def afterLoad(self):
-        self.setST(self.st)
+        self.addAttributes()
 
-        self.attributes = {
-            "ST": attributes.ST(),
-            "DX": attributes.DX(),
-            "IQ": attributes.IQ(),
-            "HT": attributes.HT(),
-        }
-        self.attributes["DX"].value = self.dx
-        self.attributes["IQ"].value = self.iq
-        self.attributes["HT"].value = self.ht
+        self.setST(self.st)
+        self.setDX(self.dx)
+        self.setIQ(self.iq)
+        self.setHT(self.ht)
 
 
 @event.listens_for(PlayerCharacter, 'before_insert')
@@ -103,4 +102,6 @@ def save(pc, session):
 
 
 def load(session, id):
-    return session.query(PlayerCharacter).filter_by(id=id).one()
+    c = session.query(PlayerCharacter).filter_by(id=id).one()
+    c.addAttributes()
+    return c
