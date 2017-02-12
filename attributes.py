@@ -42,6 +42,9 @@ class Attribute:
         else:
             self.value = self.defValue
 
+    def __repr__(self):
+        return "[{}]".format(self.value)
+
     def getValue(self):
         return self.value
 

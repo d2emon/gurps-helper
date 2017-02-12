@@ -1,12 +1,13 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Unicode
+from sqlalchemy import event
 
 Base = declarative_base()
 
 import attributes
 
 
-class Character(Base):
+class PlayerCharacter(Base):
     __tablename__ = 'character'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -15,20 +16,13 @@ class Character(Base):
     dx = Column(Integer, default=10)
     iq = Column(Integer, default=10)
     ht = Column(Integer, default=10)
+    attributes = {
+        "ST": attributes.HT(),
+        "DX": attributes.DX(),
+        "IQ": attributes.IQ(),
+        "HT": attributes.HT(),
+    }
 
-    def __init__(self, name, attributes=[10, 10, 10, 10], description=""):
-        self.name = name
-        self.st = attributes[0]
-        self.dx = attributes[1]
-        self.iq = attributes[2]
-        self.ht = attributes[3]
-        self.description = description
-
-    def __repr__(self):
-        return "<User('{}')>".format(self.name)
-
-
-class PlayerCharacter:
     def __init__(self, name="UNNAMED"):
         self.name = name
         self.attributes = {
@@ -37,6 +31,7 @@ class PlayerCharacter:
             "IQ": attributes.IQ(),
             "HT": attributes.HT(),
         }
+
         self.HP = attributes.HP(self.attributes["ST"])
         self.Will = attributes.Will(self.attributes["IQ"])
         self.Perc = attributes.Perc(self.attributes["IQ"])
@@ -44,7 +39,13 @@ class PlayerCharacter:
         self.BS = attributes.BS(self.attributes["DX"], self.attributes["HT"])
         self.Move = attributes.Move(self.BS)
 
-        self.record = Character(name=self.name)
+        self.st = self.attributes["ST"]
+        self.dx = self.attributes["DX"]
+        self.iq = self.attributes["IQ"]
+        self.ht = self.attributes["HT"]
+
+    def __repr__(self):
+        return "<User#{}\t'{}'>".format(self.id, self.name)
 
     def setST(self, value):
         self.attributes["ST"].value = value
@@ -59,26 +60,47 @@ class PlayerCharacter:
         cost += self.FP.countCost()
         return cost
 
-    def save(self, session):
-        self.record.name = self.name
-        self.record.ht = self.attributes.get("ST", 10).getValue()
-        self.record.dx = self.attributes.get("DX", 10).getValue()
-        self.record.iq = self.attributes.get("IQ", 10).getValue()
-        self.record.ht = self.attributes.get("HT", 10).getValue()
+    def beforeSave(self):
+        self.st = self.attributes.get("ST", 10).getValue()
+        self.dx = self.attributes.get("DX", 10).getValue()
+        self.iq = self.attributes.get("IQ", 10).getValue()
+        self.ht = self.attributes.get("HT", 10).getValue()
 
-        session.add(self.record)
-        session.commit()
+    def afterLoad(self):
+        self.setST(self.st)
 
-    def load(self, session, id):
-        record = session.query(Character).filter_by(id=id).one()
+        self.attributes = {
+            "ST": attributes.ST(),
+            "DX": attributes.DX(),
+            "IQ": attributes.IQ(),
+            "HT": attributes.HT(),
+        }
+        self.attributes["DX"].value = self.dx
+        self.attributes["IQ"].value = self.iq
+        self.attributes["HT"].value = self.ht
 
-        self.record = record
-        print(self.record)
 
-    def fill(self, session, id):
-        self.load(session, id)
+@event.listens_for(PlayerCharacter, 'before_insert')
+@event.listens_for(PlayerCharacter, 'before_update')
+def receive_before_insert(mapper, connection, target):
+    print("INSERT")
+    print(mapper)
+    print(connection)
+    print(target)
 
-        self.setST(self.record.st)
-        self.attributes["DX"].value = self.record.dx
-        self.attributes["IQ"].value = self.record.iq
-        self.attributes["HT"].value = self.record.ht
+
+# event.listen(PlayerCharacter, 'before_insert', receive_before_insert)
+# event.listen(PlayerCharacter, 'before_update', receive_before_insert)
+
+
+def save(pc, session):
+    pc.beforeSave()
+    print("BEFORE SAVE")
+    session.add(pc)
+    session.flush()
+    # session.commit()
+    print("+"*80)
+
+
+def load(session, id):
+    return session.query(PlayerCharacter).filter_by(id=id).one()
