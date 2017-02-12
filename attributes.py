@@ -25,6 +25,12 @@ class BasicDamage(Base):
                                                                 self.thrust_dice, self.thrust_mod,
                                                                 self.swing_dice, self.swing_mod)
 
+    def thrust(self):
+        return self.thrust_dice, self.thrust_mod
+
+    def swing(self):
+        return self.swing_dice, self.wing_mod
+
 
 class Attribute:
     defValue = 10
@@ -72,58 +78,26 @@ class Attribute:
 class ST(Attribute):
     cost = 10
 
-    def getThrustDice(self):
-        if self.value <= 10:
-            return 1
-        if self.value < 40:
-            return (self.value - 11) // 8 + 1
-        if self.value < 60:
-            return (self.value - 5) // 10 + 1
-        return (self.value) // 10 + 1
-
-    def getThrustModifier(self):
-        if self.value <= 10:
-            return (self.value - 11) // 2 - 1
-        if self.value < 40:
-            return (self.value - 11) // 2 % 4 - 1
-        if self.value < 60:
-            return 1 + (self.value - 40) // 10 * 5 - (self.value - 40) // 5 * (self.value // 10 - 3)
-        if self.value < 70:
-            return (self.value - 60) // 5 * 2 - 1
-        if self.value < 100:
-            return (self.value - 60) // 5 % 2 * 2
-        return 0
+    def damage(self):
+        import db
+        e, s = db.connect()
+        return s.query(BasicDamage).filter(BasicDamage.value >= self.value).order_by(BasicDamage.value.asc()).first()
 
     def thrust(self):
+        dmg = self.damage()
+        print(dmg)
+        dices, mod = dmg.thrust()
+
         import dice
-        return dice.d(self.getThrustDice(), modifier=self.getThrustModifier())
-
-    def getSwingDice(self):
-        if self.value <= 10:
-            return 1
-        if self.value < 27:
-            return (self.value - 9) // 4 + 1
-        if self.value < 40:
-            return (self.value - 7) // 8 + 3
-        return (self.value) // 10 + 3
-
-    def getSwingModifier(self):
-        if self.value < 9:
-            return (self.value - 11) // 2
-        if self.value < 27:
-            return (self.value - 9) % 4 - 1
-        if self.value < 40:
-            g = (self.value - 9) // 2 + 1
-            return g % 4 - 1
-        if self.value < 60:
-            return (self.value - 40) // 5 % 2 * 2 - 1
-        if self.value < 100:
-            return (self.value - 60) // 5 % 2 * 2
-        return 0
+        return dice.d(dices, modifier=mod)
 
     def swing(self):
+        dmg = self.damage()
+        print(dmg)
+        dices, mod = dmg.thrust()
+
         import dice
-        return dice.d(self.getSwingDice(), modifier=self.getSwingModifier())
+        return dice.d(dices, modifier=mod)
 
     def BL(self):
         BL = self.value * self.value / 5
