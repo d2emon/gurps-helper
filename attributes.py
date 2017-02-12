@@ -1,3 +1,31 @@
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Unicode
+
+Base = declarative_base()
+
+import attributes
+
+
+class BasicDamage(Base):
+    __tablename__ = 'basic_damage'
+    id = Column(Integer, primary_key=True)
+    value = Column(Integer, default=10)
+    thrust_dice = Column(Integer)
+    thrust_mod = Column(Integer)
+    swing_dice = Column(Integer)
+    swing_mod = Column(Integer)
+
+    def __init__(self, value, thrust=[1, -2], swing=[1, 0]):
+        self.value = value
+        self.thrust_dice, self.thrust_mod = thrust
+        self.swing_dice, self.swing_mod = swing
+
+    def __repr__(self):
+        return "<ST('{}')\tthrust {}d+{}\tswing {}d+{}>".format(self.value,
+                                                                self.thrust_dice, self.thrust_mod,
+                                                                self.swing_dice, self.swing_mod)
+
+
 class Attribute:
     defValue = 10
     cost = 10
@@ -53,7 +81,7 @@ class ST(Attribute):
             return (self.value - 5) // 10 + 1
         return (self.value) // 10 + 1
 
-    def getTrustModifier(self):
+    def getThrustModifier(self):
         if self.value <= 10:
             return (self.value - 11) // 2 - 1
         if self.value < 40:
@@ -68,7 +96,7 @@ class ST(Attribute):
 
     def thrust(self):
         import dice
-        return dice.d(self.getThrustDice(), modifier=self.getTrustModifier())
+        return dice.d(self.getThrustDice(), modifier=self.getThrustModifier())
 
     def getSwingDice(self):
         if self.value <= 10:
