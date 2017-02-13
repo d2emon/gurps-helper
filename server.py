@@ -4,7 +4,7 @@ from flask import Flask
 app = Flask(__name__)
 
 
-wilderness = [
+wilderness1 = [
     {"id": 0, "title": "Пустынная", "chance": 5},
     {"id": 1, "title": "Дикая", "chance": 8},
     {"id": 2, "title": "Обитаемая", "chance": 10},
@@ -18,11 +18,42 @@ def hello():
     return render_template("index.html")
 
 
+@app.route("/settings/land")
+@app.route("/settings/land/<int:id>")
+def setLand(id=None):
+    import db
+    e, s = db.connect(False)
+
+    from encounter.wilderness import Wilderness
+    from encounter.biome import Biome
+    wild = s.query(Wilderness).all()
+    print(wild) 
+    
+    from flask import request, render_template
+    if id is not None:
+        w = s.query(Wilderness).get(id)
+        print(w)
+
+        biome = s.query(Biome).get(1)
+        # biome.wilderness = w
+        s.add(biome)
+        s.commit()
+        print(biome)
+
+    return render_template("set_land.html", wilderness=wild)
+    
+
 @app.route("/encounter")
 def encounter():
+    import db
+    e, s = db.connect(False)
+
+    from encounter.wilderness import Wilderness
+    wild = s.query(Wilderness).all()
+    print(wild) 
+    
     from flask import render_template
-    global wilderness
-    return render_template("encounter.html", wilderness=wilderness)
+    return render_template("encounter.html", wilderness=wild)
 
 
 @app.route("/encounter/<int:wild>", methods=['GET', 'POST'])
