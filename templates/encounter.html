@@ -12,43 +12,11 @@
     <li> LAND_TYPES = [LandType(s) for s in f.readlines()]</li>
   </ul>
 
-  <h3>while True:</h3>
-  <form action="/encounter" method="POST">
-    <div>Сколько часов? <input type="text" name="hours"></div>
-    <div><input type="submit"></div>
-  </form>
+  <h3>Random encounter</h3>
   <ul>
-    <ul>
-      {% for w in wilderness %}
-      <li>{{w.title}} <a href="#">eh, ec = getChance({{w}}, hours={{hours}})</a></li>
-      {% endfor %}
-    </ul>
-    <li>
-    <p>You spent {en + 1} hours of {{hours}}</p>
-    </li>
-    <li>
-      if not ec and not gui.askYN("No encounter. Roll anyway?"):
-      <div>
-        Без энкаунтера. Бросить все равно?
-        <ul>
-          <li><a href="#">Да</a></li>
-          <li><a href="#">Нет</a></li>
-        </ul>
-      </div>
-      
-      <ul>
-        <li>continue</li>
-      </ul>
-    </li>
-    <ul>
-      {% for w in wilderness %}
-      <li>{{w.title}} <a href="#">eh, ec = getChance({{w}}, hours={{hours}})</a></li>
-      <li>cg = gui.menu.showMenu(items=[l.title for l in LAND_TYPES], func=getCreatureType)</li>
-      {% endfor %}
-    </ul>
-    <li>
-    <p>{cg}</p>
-    </li>
+    {% for w in wilderness %}
+    <li><a href="/encounter/{{w.id}}">{{w.title}}</a></li>
+    {% endfor %}
   </ul>
 </body>
 </html>
