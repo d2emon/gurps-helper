@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+{% if title %}
+<title>GURPS - {{title}}</title>
+{% else %}
+<title>GURPS</title>
+{% endif %}
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<ul>
+	<li><a href="/char">Characters</a></li>
+	<li><a href="/settings/land">Set land</a></li>
+	<li><a href="/encounter">Random encounter</a></li>
+</ul>
+{% block content %}{% endblock %}
+</body>
+</html>
+
