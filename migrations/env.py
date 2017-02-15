@@ -16,6 +16,7 @@ fileConfig(config.config_file_name)
 import os, sys
 sys.path.append(os.getcwd())
 
+
 def combine_metadata(*args):
     m = MetaData()
     for metadata in args:
@@ -24,12 +25,16 @@ def combine_metadata(*args):
     return m
 
 from encounter import table, wilderness, biome
+from app import db
 import pc
+import attributes
 target_metadata = combine_metadata(
     biome.Base.metadata,
     wilderness.Base.metadata,
     table.Base.metadata,
     pc.Base.metadata,
+    attributes.Base.metadata,
+    db.Model.metadata,
 )
 # target_metadata = None
 
