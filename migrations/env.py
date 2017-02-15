@@ -25,7 +25,7 @@ def combine_metadata(*args):
     return m
 
 from encounter import table, wilderness, biome
-from app import db
+from web import db
 import pc
 import attributes
 target_metadata = combine_metadata(
