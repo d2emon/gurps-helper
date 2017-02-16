@@ -37,13 +37,9 @@
   </div>
 </nav>
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class=flashes>
-    {% for message in messages %}
-        <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+{% for message in messages %}
+<div class="alert alert-info">{{ message }}</div>
+{% endfor %}
 {% endwith %}
 <div class="container">
   <div class="row">
