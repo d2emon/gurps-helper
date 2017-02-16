@@ -7,8 +7,35 @@
 {% else %}
 <title>GURPS</title>
 {% endif %}
+<link rel="icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Project name</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <input type="text" placeholder="Email" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="password" placeholder="Password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Sign in</button>
+      </form>
+    </div><!--/.navbar-collapse -->
+  </div>
+</nav>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class=flashes>
@@ -18,12 +45,22 @@
     </ul>
   {% endif %}
 {% endwith %}
-<ul>
-	<li><a href="/char">Characters</a></li>
-	<li><a href="/settings/land">Set land</a></li>
-	<li><a href="/encounter">Random encounter</a></li>
-</ul>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 well">
+      <ul>
+    	  <li><a href="/char">Characters</a></li>
+       	<li><a href="/settings/land">Set land</a></li>
+    	  <li><a href="/encounter">Random encounter</a></li>
+      </ul>
+    </div>
+    <div class="col-md-9">
 {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="{{ url_for("static", filename="bootstrap/js/bootstrap.min.js") }}"></script>
 </body>
 </html>
 
