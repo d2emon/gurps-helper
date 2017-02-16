@@ -1,10 +1,11 @@
-from flask.ext.wtf import Form
-#from FlaskForm import Form
+from flask_wtf import FlaskForm
+# from flask.ext.wtf import Form
+# from FlaskForm import Form
 from wtforms import TextField
 from wtforms.validators import Required, NumberRange
 
 
-class CharEditForm(Form):
+class CharEditForm(FlaskForm):
     charname = TextField('charname', validators = [Required()])
     st = TextField('st', validators = [NumberRange()])
     dx = TextField('dx', validators = [NumberRange()])
