@@ -3,6 +3,9 @@
 from web import app, db
 from flask import flash, render_template, redirect, url_for
 
+from web.views.char import character, new_character, edit_character
+from web.views.fraction import fraction, new_fraction, edit_fraction
+
 
 wilderness1 = [
     {"id": 0, "title": "Пустынная", "chance": 5},
@@ -41,56 +44,6 @@ def setLand(id=None):
         print(biome)
 
     return render_template("set_land.html", wilderness=wild)
-
-
-@app.route("/char")
-def character():
-    from web.models import GameCharacter
-    chars = GameCharacter.query.all()
-
-    return render_template("char_list.html", chars=chars)
-
-
-@app.route("/char/new", methods=['GET', 'POST'])
-def new_character():
-    from web.models import GameCharacter
-    from web.forms import CharEditForm
-    c = GameCharacter()
-
-    c.calcAttributes()
-    form = CharEditForm()
-
-    if form.validate_on_submit():
-        form.save_char(c)
-        db.session.add(c)
-        db.session.commit()
-        flash('Your changes have been saved')
-        return redirect(url_for('character'))
-    else:
-        form.load_char(c)
-    return render_template("char_edit.html", c=c, form=form)
-
-
-@app.route("/char/id-<int:char_id>", methods=['GET', 'POST'])
-def edit_character(char_id):
-    from web.models import GameCharacter
-    from web.forms import CharEditForm
-    c = GameCharacter.query.get(char_id)
-    if c is None:
-        return redirect(url_for('character'))
-
-    c.calcAttributes()
-    form = CharEditForm()
-
-    if form.validate_on_submit():
-        form.save_char(c)
-        db.session.add(c)
-        db.session.commit()
-        flash('Your changes have been saved')
-        return redirect(url_for('character'))
-    else:
-        form.load_char(c)
-    return render_template("char_edit.html", c=c, form=form)
 
 
 @app.route("/encounter")

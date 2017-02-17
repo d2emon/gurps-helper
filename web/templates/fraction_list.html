@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+{{fraction_id}}
+<ul>
+  <li><a href="/fraction/new">Добавить</a></li>
+  {% for f in fractions %}
+    <li><a href="/fraction/id-{{f.id}}"><img src="{{f.avatar()}}">{{ f.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}
