@@ -40,9 +40,7 @@ class FractionEditForm(FlaskForm):
         self.description.data = c.description
         self.weight.data = c.weight
 
-    def save_char(self, c):
-        c.charname = self.charname.data
-        c.st = self.st.data
-        c.dx = self.dx.data
-        c.iq = self.iq.data
-        c.ht = self.ht.data
+    def save_fraction(self, c):
+        c.title = self.title.data
+        c.description = self.description.data
+        c.weight = self.weight.data

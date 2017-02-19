@@ -3,6 +3,7 @@
 {{fraction_id}}
 <ul>
   <li><a href="/fraction/new">Добавить</a></li>
+  <li><a href="/fraction/random">Случайная</a></li>
   {% for f in fractions %}
     <li><a href="/fraction/id-{{f.id}}"><img src="{{f.avatar()}}">{{ f.title }}</a></li>
   {% endfor %}
